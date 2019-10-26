@@ -22,48 +22,48 @@ C# Library to communicate with the InReach Satellite API
 
 ## Example
 ```C#
-			//Set your credentials
-            InreachIPC.Config.Username = "user@name";
-            InreachIPC.Config.Password = "Correct horse battery staple!";
+    //Set your credentials
+    InreachIPC.Config.Username = "user@name";
+    InreachIPC.Config.Password = "Correct horse battery staple!";
 
-            var API = new InreachIPC.Services();
-            var DeviceIMEI = 55555555555555;
-            var Sender = "5165559817";
+    var API = new InreachIPC.Services();
+    var DeviceIMEI = 55555555555555;
+    var Sender = "5165559817";
 
-            //Binary Example
-            var binaryMessage = new InreachIPC.Services.Messaging.BinaryMessageModel()
+    //Binary Example
+    var binaryMessage = new InreachIPC.Services.Messaging.BinaryMessageModel()
+    {
+        Messages = new List<InreachIPC.Services.Messaging.BinaryMessageModel.Message>()
+        {
+            new InreachIPC.Services.Messaging.BinaryMessageModel.Message()
             {
-                Messages = new List<InreachIPC.Services.Messaging.BinaryMessageModel.Message>()
-                {
-                    new InreachIPC.Services.Messaging.BinaryMessageModel.Message()
-                    {
-                        //Max binary payload is 268 bytes, recipient is the IMEI
-                        Payload = new byte[3]{0x00, 0x01, 0x02}, Recipients = {DeviceIMEI},
-                        Type = InreachIPC.Services.Messaging.BinaryMessageModel.Message.BinaryTypeModel.Generic
-                    }
-                }
-            };
+                //Max binary payload is 268 bytes, recipient is the IMEI
+                Payload = new byte[3]{0x00, 0x01, 0x02}, Recipients = {DeviceIMEI},
+                Type = InreachIPC.Services.Messaging.BinaryMessageModel.Message.BinaryTypeModel.Generic
+            }
+        }
+    };
 
-            //Text Example
-            var textMessage = new InreachIPC.Services.Messaging.TextMessageModel()
+    //Text Example
+    var textMessage = new InreachIPC.Services.Messaging.TextMessageModel()
+    {
+        Messages = new List<InreachIPC.Services.Messaging.TextMessageModel.Message>()
+        {
+            new InreachIPC.Services.Messaging.TextMessageModel.Message()
             {
-                Messages = new List<InreachIPC.Services.Messaging.TextMessageModel.Message>()
-                {
-                    new InreachIPC.Services.Messaging.TextMessageModel.Message()
-                    {
-                        MessageText = "API TextMessage Test", Recipients = {DeviceIMEI}, Sender = Sender, Timestamp = DateTime.UtcNow
-                    }
-                }
-            };
+                MessageText = "API TextMessage Test", Recipients = {DeviceIMEI}, Sender = Sender, Timestamp = DateTime.UtcNow
+            }
+        }
+    };
 
-            //Send a version query and print it to the Console
-            var APIVersion = API.Send(new InreachIPC.Services.Messaging.VersionModel()).Result.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(JToken.Parse(APIVersion).ToString(Formatting.Indented));
+    //Send a version query and print it to the Console
+    var APIVersion = API.Send(new InreachIPC.Services.Messaging.VersionModel()).Result.Content.ReadAsStringAsync().Result;
+    Console.WriteLine(JToken.Parse(APIVersion).ToString(Formatting.Indented));
 
-			/** Warning: These cost money/credits on plans without unlimited messaging **/
-			//Send the Binary Example
-            // await API.Send(binaryMessage);
+    /** Warning: These cost money/credits on plans without unlimited messaging **/
+    //Send the Binary Example
+    // await API.Send(binaryMessage);
 
-            //Send the Text Example
-            // await API.Send(textMessage);
+    //Send the Text Example
+    // await API.Send(textMessage);
 ```
