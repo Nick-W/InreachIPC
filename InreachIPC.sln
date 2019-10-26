@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.138
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InreachIPC", "InreachIPC.csproj", "{1C9EE642-E3D6-4C5E-9A5E-7513116B7386}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InreachIPC Test", "..\InreachIPC Test\InreachIPC Test.csproj", "{E816EB31-C848-472E-82BA-F4786C108001}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C9EE642-E3D6-4C5E-9A5E-7513116B7386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9EE642-E3D6-4C5E-9A5E-7513116B7386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C9EE642-E3D6-4C5E-9A5E-7513116B7386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9EE642-E3D6-4C5E-9A5E-7513116B7386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E816EB31-C848-472E-82BA-F4786C108001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E816EB31-C848-472E-82BA-F4786C108001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E816EB31-C848-472E-82BA-F4786C108001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E816EB31-C848-472E-82BA-F4786C108001}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3898D2FE-891E-4ABC-AD13-529BD7F7849F}
+	EndGlobalSection
+EndGlobal
