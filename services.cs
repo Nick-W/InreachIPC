@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace InreachIPC
 {
-    public class services
+    public class Services
     {
         public async Task<HttpResponseMessage> Send(APIMessage model)
         {
