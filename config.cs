@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace InreachIPC
+namespace Ayva.InreachIPC
 {
     /// <summary>
     /// InReach Portal Credentials & Endpoint Settings

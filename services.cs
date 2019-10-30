@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using Newtonsoft.Json;
 
-namespace InreachIPC
+namespace Ayva.InreachIPC
 {
     public class Services
     {

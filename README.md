@@ -1,6 +1,9 @@
 # InreachIPC
 C# Library to communicate with the InReach Satellite API
 
+## Installation
+Install-Package Ayva.InreachIPC
+
 ## Features
 ### Implemented
 * Binary Messages
@@ -67,3 +70,6 @@ C# Library to communicate with the InReach Satellite API
     //Send the Text Example
     // await API.Send(textMessage);
 ```
+
+## License
+Unlicense (Public Domain)
