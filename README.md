@@ -31,7 +31,7 @@ Install-Package Ayva.InreachIPC
 ```C#
     //Set your credentials
     InreachIPC.Config.Username = "user@name";
-    InreachIPC.Config.Password = "Correct horse battery staple!";
+    InreachIPC.Config.Password = "correct horse battery staple!";
 
     var API = new InreachIPC.Services();
     var DeviceIMEI = 55555555555555;
@@ -44,8 +44,9 @@ Install-Package Ayva.InreachIPC
         {
             new InreachIPC.Services.Messaging.BinaryMessageModel.Message()
             {
-                //Max binary payload is 268 bytes, recipient is the IMEI
-                Payload = new byte[3]{0x00, 0x01, 0x02}, Recipients = {DeviceIMEI},
+                //Max payload is 268 bytes, recipient is the IMEI
+                Payload = new byte[3]{0x00, 0x01, 0x02},
+                Recipients = {DeviceIMEI},
                 Type = InreachIPC.Services.Messaging.BinaryMessageModel.Message.BinaryTypeModel.Generic
             }
         }
@@ -58,21 +59,24 @@ Install-Package Ayva.InreachIPC
         {
             new InreachIPC.Services.Messaging.TextMessageModel.Message()
             {
-                MessageText = "API TextMessage Test", Recipients = {DeviceIMEI}, Sender = Sender, Timestamp = DateTime.UtcNow
+                MessageText = "API TextMessage Test",
+                Recipients = {DeviceIMEI},
+                Sender = Sender,
+                Timestamp = DateTime.UtcNow
             }
         }
     };
 
     //Send a version query and print it to the Console
-    var APIVersion = API.Send(new InreachIPC.Services.Messaging.VersionModel()).Result.Content.ReadAsStringAsync().Result;
-    Console.WriteLine(JToken.Parse(APIVersion).ToString(Formatting.Indented));
+    var APIVersion = await API.Send(new InreachIPC.Services.Messaging.VersionModel());
+    Console.WriteLine(JToken.Parse(await APIVersion.Content.ReadAsStringAsync()).ToString(Formatting.Indented));
 
     /** Warning: These cost money/credits on plans without unlimited messaging **/
     //Send the Binary Example
-    // await API.Send(binaryMessage);
+    //API.Send(binaryMessage);
 
     //Send the Text Example
-    // await API.Send(textMessage);
+    //API.Send(textMessage);
 ```
 
 ## License
