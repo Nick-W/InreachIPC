@@ -71,7 +71,18 @@ namespace Ayva.InreachIPC
                 public class Message
                 {
                     [JsonProperty(PropertyName = "Payload")]
-                    public byte[] Payload;
+                    public byte[] Payload
+                    {
+                        get => _payload;
+                        set
+                        {
+                            if (value.Length > 268)
+                                throw new FormatException("Payload length is limited to 268 bytes");
+                            _payload = value;
+                        }
+                    }
+
+                    public byte[] _payload;
 
                     [JsonProperty(PropertyName = "Recipients")]
                     public List<long> Recipients = new List<long>();
@@ -99,7 +110,18 @@ namespace Ayva.InreachIPC
                 public class Message
                 {
                     [JsonProperty(PropertyName = "Message")]
-                    public string MessageText;
+                    public string MessageText
+                    {
+                        get => _messageText;
+                        set
+                        {
+                            if (value.Length > 160)
+                                throw new FormatException("Text messages are limited to 160 characters");
+                            _messageText = value;
+                        }
+                    }
+
+                    private string _messageText;
 
                     [JsonProperty(PropertyName = "Recipients")]
                     public List<long> Recipients = new List<long>();

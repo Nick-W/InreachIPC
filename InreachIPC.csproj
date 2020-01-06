@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Nick Wilson</Authors>
     <Company>Ayva</Company>
     <PackageId>Ayva.InreachIPC</PackageId>
@@ -10,8 +10,8 @@
     <Description>C# Library to communicate with the InReach Satellite API</Description>
     <Copyright />
     <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
-    <AssemblyVersion>0.0.1.0</AssemblyVersion>
-    <FileVersion>0.0.1.0</FileVersion>
+    <AssemblyVersion>0.0.1.1</AssemblyVersion>
+    <FileVersion>0.0.1.1</FileVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RootNamespace>Ayva.InreachIPC</RootNamespace>
     <AssemblyName>InreachIPC</AssemblyName>

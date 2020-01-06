@@ -4,6 +4,10 @@
 [![NuGet Badge](https://buildstats.info/nuget/Ayva.InreachIPC)](https://www.nuget.org/packages/Ayva.InreachIPC/)
 
 C# Library to communicate with the InReach Satellite API
+## Updates
+##### [1/5/2020] v0.1.1 Added a length-check for outbound messages, throws FormatException when overrun.
+- Binary messages are limited to 268 bytes
+- Text messages are limited to 160 chars
 
 ## Installation
 Install-Package Ayva.InreachIPC
@@ -59,6 +63,7 @@ Install-Package Ayva.InreachIPC
         {
             new InreachIPC.Services.Messaging.TextMessageModel.Message()
             {
+                //Max message length is 160 chars
                 MessageText = "API TextMessage Test",
                 Recipients = {DeviceIMEI},
                 Sender = Sender,
@@ -71,12 +76,21 @@ Install-Package Ayva.InreachIPC
     var APIVersion = await API.Send(new InreachIPC.Services.Messaging.VersionModel());
     Console.WriteLine(JToken.Parse(await APIVersion.Content.ReadAsStringAsync()).ToString(Formatting.Indented));
 
-    /** Warning: These cost money/credits on plans without unlimited messaging **/
-    //Send the Binary Example
-    //API.Send(binaryMessage);
+    /** Result:
+        {
+            "Build": "1.0.37.3831",
+            "Service": "Messaging",
+            "URL": "https://airdroptracker.com/IPCInbound/V1/Messaging.svc",
+            "Version": "V1"
+        }
+    **/
 
-    //Send the Text Example
-    //API.Send(textMessage);
+    /** Warning: These cost money/credits on plans without unlimited messaging **/
+    //Send the Binary Example.  Returns HTTP status code
+    await API.Send(binaryMessage);
+
+    //Send the Text Example.  Returns HTTP status code
+    await API.Send(textMessage);
 ```
 
 ## License
