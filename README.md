@@ -26,7 +26,7 @@ Install-Package Ayva.InreachIPC
 * Tracking
 * Emergency Status
 
-## Usage
+## Config
 * (Required) **InreachIPC.Config.Username**
 * (Required) **InreachIPC.Config.Password**
 * (Optional) **InreachIPC.Config.APIEndpoint** [US, Europe, Australia, Custom]
