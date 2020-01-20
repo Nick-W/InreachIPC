@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 
 namespace Ayva.InreachIPC
 {
+    /// <summary>
+    /// Version and Messaging services, and Serializer
+    /// </summary>
     public class Services
     {
         public async Task<HttpResponseMessage> Send(APIMessage model)
@@ -172,7 +175,7 @@ namespace Ayva.InreachIPC
             /// <summary>
             /// Model to retrieve the API Version
             /// </summary>
-            [ServicePath(path = "Messaging.svc/Version", method = ServicePath.HttpMethods.GET)]
+            [ServicePath(path = "Messaging.svc/Version", method = ServicePath.HttpMethods.GET)] 
             public class VersionModel : APIMessage
             {
             }
