@@ -8,8 +8,11 @@ namespace Ayva.InreachIPC
 {
     public class Location
     {
+        /// <summary>
+        /// Model to retrieve the Last Known Location
+        /// </summary>
         [Services.APIMessage.ServicePath(path = "Location.svc/LastKnownLocation?IMEI={PARAM}", method = Services.APIMessage.ServicePath.HttpMethods.POST)]
-        public class LastKnownLocation: Services.APIMessage
+        public class LastKnownLocationModel: Services.APIMessage
         {
             public class CoordinateModel
             {
