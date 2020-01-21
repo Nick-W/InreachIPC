@@ -1,19 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Newtonsoft.Json;
 
 
 namespace Ayva.InreachIPC
 {
-    public class Location
+    public class Location    
     {
         /// <summary>
         /// Model to retrieve the Last Known Location
         /// </summary>
-        [Services.APIMessage.ServicePath(path = "Location.svc/LastKnownLocation?IMEI={PARAM}", method = Services.APIMessage.ServicePath.HttpMethods.POST)]
+        [Services.APIMessage.ServicePath(method = Services.APIMessage.ServicePath.HttpMethods.POST)]
         public class LastKnownLocationModel: Services.APIMessage
         {
+            private long _IMEI;
+            public LastKnownLocationModel(long IMEI)
+            {
+                ServicePath attribute = (ServicePath)this.GetType().GetCustomAttributes(typeof(Services.APIMessage.ServicePath), true).SingleOrDefault();
+                attribute.path = $"Location.svc/LastKnownLocation?IMEI={_IMEI}";
+            }
+
             public class CoordinateModel
             {
                 public long Latitude;
