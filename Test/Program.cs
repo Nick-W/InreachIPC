@@ -23,7 +23,7 @@ namespace InreachIPC_Test
             //First create the API model - we'll use VersionModel here
             var APIVersion = new InreachIPC.Messaging.VersionModel();
 
-            //Then send it to InreachIPC.Services to process the request & response.  The model will be populated with the result information, diagnostic information, and the response.
+            //Then send it to InreachIPC.Services to process the request & response.  The model will be populated with the result information, diagnostics, and the response.
             Console.WriteLine($"Unprocessed APIVersion: {APIVersion}");
             Console.WriteLine($"Processed APIVersion: {await API.Process(APIVersion)}");
 
@@ -32,7 +32,7 @@ namespace InreachIPC_Test
                   Processed APIVersion: {Model=VersionModel, Path=Messaging.svc/Version, Status=PROCESSED, ID=87207750-1ac1-4459-b4b5-d0641140687e | JSON: "{"Build":"1.0.37.8399","Service":"Messaging","URL":"https://airdroptracker.com/IPCInbound/V1/Messaging.svc","Version":"V1"}"}
              */
 
-            //There are a few other informational methods implemented on the APIModel type:
+            //There are a few other informational methods implemented on the APIModel type to aid with development:
             //  Get the JSON-parsed & formatted result
             Console.WriteLine($"Model.GetJsonResult(): {await APIVersion.GetJsonResult()}");
             /** Result:

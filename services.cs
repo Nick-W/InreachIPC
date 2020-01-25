@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,16 +19,16 @@ namespace Ayva.InreachIPC
             _config.Username = username;
             _config.Password = password;
         }
-        public async Task<APIMessage> Process(APIMessage model)
+        public async Task<APIModel> Process(APIModel model)
         {
             model.Response = new HttpResponseMessage();
-            model.ModelStatus = APIMessage.ModelStatuses.SENDING;
+            model.ModelStatus = APIModel.ModelStatuses.SENDING;
             using (var httpClient = new HttpClient(new HttpClientHandler() { Credentials = new NetworkCredential(_config.Username, _config.Password) }))
             {
-                var modelAttribute = (APIMessage.ServicePath)model.GetType().GetCustomAttributes(typeof(APIMessage.ServicePath), true).Single();
+                var modelAttribute = (APIModel.ServicePath)model.GetType().GetCustomAttributes(typeof(APIModel.ServicePath), true).Single();
                 switch (modelAttribute.method)
                 {
-                    case APIMessage.ServicePath.HttpMethods.POST:
+                    case APIModel.ServicePath.HttpMethods.POST:
                         var payload = JsonConvert.SerializeObject(model,
                             new JsonSerializerSettings()
                             {
@@ -39,7 +38,7 @@ namespace Ayva.InreachIPC
                         var postContent = new StringContent(payload, Encoding.UTF8, "application/json");
                         model.Response = await httpClient.PostAsync($"{_config.GetEndpointUri}/{model.BuildUri()}", postContent);
                         break;
-                    case APIMessage.ServicePath.HttpMethods.GET:
+                    case APIModel.ServicePath.HttpMethods.GET:
                         model.Response = await httpClient.GetAsync($"{_config.GetEndpointUri}/{model.BuildUri()}");
                         break;
                 }
@@ -47,18 +46,18 @@ namespace Ayva.InreachIPC
 
             if (model.Response.StatusCode != HttpStatusCode.OK)
             {
-                model.ModelStatus = APIMessage.ModelStatuses.ERROR;
+                model.ModelStatus = APIModel.ModelStatuses.ERROR;
                 throw new InreachIPCException($"API request failed", model, this);
             }
 
             JsonConvert.PopulateObject(await model.Response.Content.ReadAsStringAsync(), model);
-            model.ModelStatus = APIMessage.ModelStatuses.PROCESSED;
+            model.ModelStatus = APIModel.ModelStatuses.PROCESSED;
             return model;
         }
 
         public class InreachIPCException : Exception
         {
-            public InreachIPCException(string message, APIMessage model, Services services)
+            public InreachIPCException(string message, APIModel model, Services services)
                 : base($"{{Message=\"{message}\"," +
                        $"{(model.Response != null ? $"Code={Enum.GetName(typeof(HttpStatusCode), model.Response.StatusCode)}, Response={model.Response.Content.ReadAsStringAsync().Result}, " : string.Empty)}" +
                        $"Model={model}, " +
@@ -68,7 +67,10 @@ namespace Ayva.InreachIPC
         }
 
         [JsonObject(MemberSerialization.OptIn)]
-        public abstract class APIMessage
+        public abstract class APIComponent
+        { }
+
+        public abstract class APIModel : APIComponent
         {
             protected string pathParameters = string.Empty;
             public HttpResponseMessage Response;
