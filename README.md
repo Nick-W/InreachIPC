@@ -43,7 +43,7 @@ Install-Package Ayva.InreachIPC
 ```
 #### Send a version request
 ```C#
-            //First create the API model - we'll use VersionModel here
+            //First create the API model - we'll use VersionModel for this example
             var APIVersion = new InreachIPC.Messaging.VersionModel();
 
             //Then send it to InreachIPC.Services to process the request & response.  The model will be populated with the result information, diagnostic information, and the response.
@@ -51,7 +51,7 @@ Install-Package Ayva.InreachIPC
             Console.WriteLine($"Processed APIVersion: {await API.Process(APIVersion)}");
 
             /** Result:
-                  New APIVersion: {Model=VersionModel, Path=Messaging.svc/Version, Status=NEW, ID=87207750-1ac1-4459-b4b5-d0641140687e | JSON: "{}"}
+                  Unprocessed APIVersion: {Model=VersionModel, Path=Messaging.svc/Version, Status=NEW, ID=87207750-1ac1-4459-b4b5-d0641140687e | JSON: "{}"}
                   Processed APIVersion: {Model=VersionModel, Path=Messaging.svc/Version, Status=PROCESSED, ID=87207750-1ac1-4459-b4b5-d0641140687e | JSON: "{"Build":"1.0.37.8399","Service":"Messaging","URL":"https://airdroptracker.com/IPCInbound/V1/Messaging.svc","Version":"V1"}"}
              */
 
