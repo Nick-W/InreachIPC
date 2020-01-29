@@ -9,6 +9,8 @@ C# Library to communicate with the InReach Satellite API
 - Prevents serialization of private attributes on subclasses where OptIn behavior was not applied.
 ##### [1/24/2020] v0.1.2 Proper response deserialization, exception handling, and support for non-attribute uri parameters
 - Breaking change: Services.Send(APIModel) has been renamed to Services.Process(APIModel)
+- Breaking change: APIMessage has been renamed to APIModel
+- Breaking change: Configuration & credentials are now set when instantiating InreachIPC.Services(...)
 ##### [1/5/2020] v0.1.1 Added a length-check for outbound messages, throws FormatException when overrun.
 - Binary messages are limited to 268 bytes
 - Text messages are limited to 160 chars
