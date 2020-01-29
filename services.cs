@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Ayva.InreachIPC
 {
@@ -14,15 +16,22 @@ namespace Ayva.InreachIPC
     /// </summary>
     public class Services
     {
-        public async Task<HttpResponseMessage> Send(APIMessage model)
+        private readonly Config _config = new Config();
+        public Services(string username, string password, Config.RegionalEndpoints region = Config.RegionalEndpoints.US)
         {
-            HttpResponseMessage response = new HttpResponseMessage();
-            using (var httpClient = new HttpClient(new HttpClientHandler() {Credentials = new NetworkCredential(Config.Username, Config.Password)}))
+            _config.Username = username;
+            _config.Password = password;
+        }
+        public async Task<APIModel> Process(APIModel model)
+        {
+            model.Response = new HttpResponseMessage();
+            model.ModelStatus = APIModel.ModelStatuses.SENDING;
+            using (var httpClient = new HttpClient(new HttpClientHandler() { Credentials = new NetworkCredential(_config.Username, _config.Password) }))
             {
-                var modelAttribute = (APIMessage.ServicePath) model.GetType().GetCustomAttributes(typeof(APIMessage.ServicePath), true).SingleOrDefault();
+                var modelAttribute = (APIModel.ServicePath)model.GetType().GetCustomAttributes(typeof(APIModel.ServicePath), true).Single();
                 switch (modelAttribute.method)
                 {
-                    case APIMessage.ServicePath.HttpMethods.POST:
+                    case APIModel.ServicePath.HttpMethods.POST:
                         var payload = JsonConvert.SerializeObject(model,
                             new JsonSerializerSettings()
                             {
@@ -30,26 +39,61 @@ namespace Ayva.InreachIPC
                                 DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
                             });
                         var postContent = new StringContent(payload, Encoding.UTF8, "application/json");
-                        response = await httpClient.PostAsync($"{Config.GetEndpointUri}/{modelAttribute.path}", postContent);
+                        model.Response = await httpClient.PostAsync($"{_config.GetEndpointUri}/{model.BuildUri()}", postContent);
                         break;
-                    case APIMessage.ServicePath.HttpMethods.GET:
-                        response = await httpClient.GetAsync($"{Config.GetEndpointUri}/{modelAttribute.path}");
+                    case APIModel.ServicePath.HttpMethods.GET:
+                        model.Response = await httpClient.GetAsync($"{_config.GetEndpointUri}/{model.BuildUri()}");
                         break;
                 }
             }
 
-            if (response.StatusCode != HttpStatusCode.OK)
-                throw new HttpRequestException(
-                    $"API request failed - code {response.StatusCode}: {response.Content.ReadAsStringAsync()}");
+            if (model.Response.StatusCode != HttpStatusCode.OK)
+            {
+                model.ModelStatus = APIModel.ModelStatuses.ERROR;
+                throw new InreachIPCException($"API request failed", model, this);
+            }
 
-            return response;
+            JsonConvert.PopulateObject(await model.Response.Content.ReadAsStringAsync(), model);
+            model.ModelStatus = APIModel.ModelStatuses.PROCESSED;
+            return model;
         }
 
-        public class APIMessage
+        public class InreachIPCException : Exception
         {
-            public class ServicePath : Attribute
+            public InreachIPCException(string message, APIModel model, Services services)
+                : base($"{{Message=\"{message}\"," +
+                       $"{(model.Response != null ? $"Code={Enum.GetName(typeof(HttpStatusCode), model.Response.StatusCode)}, Response={model.Response.Content.ReadAsStringAsync().Result}, " : string.Empty)}" +
+                       $"Model={model}, " +
+                       $"ServicesEndpoint={Enum.GetName(typeof(Config.RegionalEndpoints), services._config.APIEndpoint)}}}")
             {
+            }
+        }
+
+        [JsonObject(MemberSerialization.OptIn)]
+        public abstract class APIComponent
+        { }
+
+        public abstract class APIModel : APIComponent
+        {
+            protected string pathParameters = string.Empty;
+            public HttpResponseMessage Response;
+            public ModelStatuses ModelStatus = ModelStatuses.NEW;
+            public Guid MessageID = Guid.NewGuid();
+
+            public enum ModelStatuses
+            {
+                NEW,
+                SENDING,
+                PROCESSED,
+                ERROR
+            }
+
+            [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+            internal class ServicePath : Attribute
+            {
+                [Required(AllowEmptyStrings = false, ErrorMessage = "Path is required on types that implement APIMessage")]
                 public string path;
+                [Required(ErrorMessage = "Method is required on types that implement APIMessage")]
                 public HttpMethods method;
 
                 public enum HttpMethods
@@ -58,127 +102,41 @@ namespace Ayva.InreachIPC
                     GET
                 }
             }
-        }
 
-        public static class Messaging
-        {
-            /// <summary>
-            /// Model to send a binary (encrypted?) message
-            /// </summary>
-            [ServicePath(path = "Messaging.svc/Binary", method = ServicePath.HttpMethods.POST)]
-            public class BinaryMessageModel : APIMessage
+            internal virtual Uri BuildUri()
             {
-                [JsonProperty(PropertyName = "Messages")]
-                public List<Message> Messages = new List<Message>();
-
-                public class Message
-                {
-                    [JsonProperty(PropertyName = "Payload")]
-                    public byte[] Payload
-                    {
-                        get => _payload;
-                        set
-                        {
-                            if (value.Length > 268)
-                                throw new FormatException("Payload length is limited to 268 bytes");
-                            _payload = value;
-                        }
-                    }
-
-                    public byte[] _payload;
-
-                    [JsonProperty(PropertyName = "Recipients")]
-                    public List<long> Recipients = new List<long>();
-
-                    [JsonProperty(PropertyName = "Type")] public BinaryTypeModel Type;
-
-                    public enum BinaryTypeModel
-                    {
-                        Encrypted = 0,
-                        Generic = 1,
-                        EncryptedPinpoint = 2
-                    }
-                }
+                var modelAttribute = (ServicePath)GetType().GetCustomAttributes(typeof(ServicePath), true).SingleOrDefault();
+                if (modelAttribute == null || String.IsNullOrEmpty(modelAttribute.path))
+                    throw new ArgumentException("Model is missing required attribute data [ServicePath path=value method=value]");
+                if (!String.IsNullOrEmpty(pathParameters) && modelAttribute.method != ServicePath.HttpMethods.GET)
+                    throw new ArgumentException("Model has path parameters with an incompatible method type");
+                return new Uri($"{modelAttribute.path}{pathParameters}", UriKind.Relative);
             }
 
-            /// <summary>
-            /// Model to send a text message, with optional reference data
-            /// </summary>
-            [ServicePath(path = "Messaging.svc/Message", method = ServicePath.HttpMethods.POST)]
-            public class TextMessageModel : APIMessage
+            public async Task<string> GetJsonResult()
             {
-                [JsonProperty(PropertyName = "Messages")]
-                public List<Message> Messages = new List<Message>();
-
-                public class Message
-                {
-                    [JsonProperty(PropertyName = "Message")]
-                    public string MessageText
-                    {
-                        get => _messageText;
-                        set
-                        {
-                            if (value.Length > 160)
-                                throw new FormatException("Text messages are limited to 160 characters");
-                            _messageText = value;
-                        }
-                    }
-
-                    private string _messageText;
-
-                    [JsonProperty(PropertyName = "Recipients")]
-                    public List<long> Recipients = new List<long>();
-
-                    [JsonProperty(PropertyName = "Sender")]
-                    public string Sender;
-
-                    [JsonProperty(PropertyName = "Timestamp")]
-                    public DateTime Timestamp;
-
-                    [JsonProperty(PropertyName = "ReferencePoint")]
-                    public ReferencePointModel ReferencePoint;
-
-
-                    public class ReferencePointModel
-                    {
-                        [JsonProperty(PropertyName = "Altitude")]
-                        public long Altitude;
-
-                        [JsonProperty(PropertyName = "Coordinate")]
-                        public CoordinateModel Coordinate = new CoordinateModel();
-
-                        [JsonProperty(PropertyName = "Course")]
-                        public long Course;
-
-                        [JsonProperty(PropertyName = "Label")] public string Label;
-
-                        [JsonProperty(PropertyName = "LocationType")]
-                        public LocationTypes LocationType;
-
-                        [JsonProperty(PropertyName = "Speed")] public long Speed;
-
-                        public class CoordinateModel
-                        {
-                            public long Latitude;
-                            public long Longitude;
-                        }
-
-                        public enum LocationTypes
-                        {
-                            ReferencePoint = 0,
-                            GPSLocation = 1
-                        }
-                    }
-                }
+                if (ModelStatus != ModelStatuses.PROCESSED)
+                    throw new MethodAccessException("Result JSON is only available after the Model has been successfully processed");
+                return JToken.Parse(await Response.Content.ReadAsStringAsync()).ToString(Formatting.Indented);
             }
 
-            /// <summary>
-            /// Model to retrieve the API Version
-            /// </summary>
-            [ServicePath(path = "Messaging.svc/Version", method = ServicePath.HttpMethods.GET)] 
-            public class VersionModel : APIMessage
+            public async Task<string> GetRawResult()
             {
+                if (Response == null)
+                    throw new MethodAccessException("Result text is only available after the Model has been processed");
+                return await Response.Content.ReadAsStringAsync();
             }
+
+            public override string ToString()
+            {
+                var modelContent = JsonConvert.SerializeObject(this,
+                    new JsonSerializerSettings()
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+                        Formatting = Formatting.None
+                    });
+                return $"{{Type={GetType().Name}, Path={BuildUri()}, Status={Enum.GetName(typeof(ModelStatuses), ModelStatus)}, ID={MessageID}, JSON={modelContent}}}";}
         }
     }
 }

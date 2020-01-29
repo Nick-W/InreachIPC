@@ -6,16 +6,16 @@ namespace Ayva.InreachIPC
     /// <summary>
     /// InReach Portal Credentials & Endpoint Settings
     /// </summary>
-    public static class Config
+    public class Config
     {
-        public static string Username;
-        public static string Password;
-        internal static string customUri;
+        public string Username;
+        public string Password;
+        internal string customUri;
 
         /// <summary>
         /// Default region set to US
         /// </summary>
-        public static RegionalEndpoints APIEndpoint = RegionalEndpoints.US;
+        public RegionalEndpoints APIEndpoint = RegionalEndpoints.US;
 
         /// <summary>
         /// Regional endpoints as defined in the Delorme/Garmin IPC documentation
@@ -40,9 +40,9 @@ namespace Ayva.InreachIPC
         /// <summary>
         /// (Read Only) Uri of the InReach Portal API
         /// </summary>
-        public static string GetEndpointUri => APIEndpoint == RegionalEndpoints.Custom ? customUri : ((Region)APIEndpoint.GetType().GetField(Enum.GetName(APIEndpoint.GetType(), APIEndpoint)).GetCustomAttributes(typeof(Region), true).SingleOrDefault()).Uri;
+        public string GetEndpointUri => APIEndpoint == RegionalEndpoints.Custom ? customUri : ((Region)APIEndpoint.GetType().GetField(Enum.GetName(APIEndpoint.GetType(), APIEndpoint)).GetCustomAttributes(typeof(Region), true).SingleOrDefault()).Uri;
 
-        public static string SetCustomApiUri
+        public string SetCustomApiUri
         {
             set
             {
