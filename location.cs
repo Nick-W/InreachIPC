@@ -7,10 +7,23 @@ namespace Ayva.InreachIPC
 {
     public class Location    
     {
+
+        /// <summary>
+        /// Model to retrieve the API Version
+        /// </summary>
+        [ServicePath(path = "Location.svc/Version", method = ServicePath.HttpMethods.GET)]
+        public class VersionModel : Services.APIModel
+        {
+            [JsonProperty] public string Build { get; protected set; }
+            [JsonProperty] public string Service { get; protected set; }
+            [JsonProperty] public Uri URL { get; protected set; }
+            [JsonProperty] public string Version { get; protected set; }
+        }
+
         /// <summary>
         /// Model to retrieve the Last Known Location
         /// </summary>
-        [Services.APIModel.ServicePath(path = "", method = Services.APIModel.ServicePath.HttpMethods.GET)]
+        [Services.APIModel.ServicePath(path = "Location.svc/LocationRequest", method = Services.APIModel.ServicePath.HttpMethods.GET)]
         public class LastKnownLocationModel: Services.APIModel
         {
 /*            private long _IMEI;
