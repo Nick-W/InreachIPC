@@ -10,8 +10,8 @@ namespace Ayva.InreachIPC
         /// <summary>
         /// Model to retrieve the Last Known Location
         /// </summary>
-        [Services.APIMessage.ServicePath(path = "", method = Services.APIMessage.ServicePath.HttpMethods.GET)]
-        public class LastKnownLocationModel: Services.APIMessage
+        [Services.APIModel.ServicePath(path = "", method = Services.APIModel.ServicePath.HttpMethods.GET)]
+        public class LastKnownLocationModel: Services.APIModel
         {
 /*            private long _IMEI;
             public LastKnownLocationModel(long IMEI)
