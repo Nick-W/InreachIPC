@@ -11,6 +11,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Ayva.InreachIPC
 {
+    /// <summary>
+    /// Version and Messaging services, and Serializer
+    /// </summary>
     public class Services
     {
         private readonly Config _config = new Config();

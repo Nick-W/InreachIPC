@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InreachIPC", "InreachIPC.cs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InreachIPC Test", "Test\InreachIPC Test.csproj", "{5832313C-07DF-4512-96FA-A5F55981D190}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InreachIPC LocationTest", "LocationTest\InreachIPC LocationTest.csproj", "{8D70EE47-5A45-4FE7-A110-735704685F72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5832313C-07DF-4512-96FA-A5F55981D190}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5832313C-07DF-4512-96FA-A5F55981D190}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5832313C-07DF-4512-96FA-A5F55981D190}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D70EE47-5A45-4FE7-A110-735704685F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D70EE47-5A45-4FE7-A110-735704685F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D70EE47-5A45-4FE7-A110-735704685F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D70EE47-5A45-4FE7-A110-735704685F72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
