@@ -1,6 +1,6 @@
 # InreachIPC
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
-[![Build Status](https://dev.azure.com/AyvaLimited/InreachIPC/_apis/build/status/Nick-W.InreachIPC?branchName=master)](https://dev.azure.com/AyvaLimited/InreachIPC/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/AyvaLimited/InreachIPC/_apis/build/status/Nick-W.InreachIPC?branchName=master)](https://dev.azure.com/AyvaOps/InreachIPC/_build/latest?definitionId=1&branchName=master)
 [![NuGet Badge](https://buildstats.info/nuget/Ayva.InreachIPC)](https://www.nuget.org/packages/Ayva.InreachIPC/)
 
 C# Library to communicate with the InReach Satellite API
